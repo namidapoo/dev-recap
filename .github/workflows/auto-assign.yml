@@ -1,0 +1,25 @@
+name: Auto Assign PR
+
+on:
+  pull_request:
+    types: [opened, unassigned]
+
+permissions:
+  pull-requests: write
+  repository-projects: read
+
+jobs:
+  assign:
+    name: PR automation
+    timeout-minutes: 1
+    if: ${{ ! contains(fromJson('["renovate[bot]", "dependabot[bot]"]'), github.actor) }}
+    runs-on: ubuntu-22.04
+    # コミットが重なった時同時に実行されないように、進行中のジョブをキャンセルするように設定する。
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Set GitHub assignees
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr edit ${{ github.event.number }} --add-assignee ${{ github.actor }} --repo ${{ github.repository }}

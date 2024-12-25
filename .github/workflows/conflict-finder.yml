@@ -1,0 +1,13 @@
+name: "conflict-finder"
+on:
+  push:
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hcancelik/pr-conflict-finder@v1.0.6
+        with:
+          secret_token: ${{ secrets.GITHUB_TOKEN }}
+          conflict_label: "conflict"
+          max_tries: 5
+          wait_ms: 5000

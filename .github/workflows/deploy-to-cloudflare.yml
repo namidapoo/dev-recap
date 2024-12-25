@@ -1,0 +1,104 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Get Latest Commit Hash
+        id: get_commit
+        run: echo "COMMIT_HASH=$(git rev-parse --short=7 HEAD)" >> $GITHUB_ENV
+
+      - name: Setup Bun Environment
+        uses: oven-sh/setup-bun@v2.0.1
+
+      - name: Install Project Dependencies
+        run: bun i
+
+      - name: Build Project with Bun
+        run: bunx @cloudflare/next-on-pages
+
+      - name: Deploy to Cloudflare Pages with Wrangler
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy .vercel/output/static --project-name=${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+
+      - name: Create Comment Content
+        run: |
+          {
+            echo "GH_SAMPLE_COMMENT<<EOF"
+            echo "<!-- DEPLOYMENT_COMMENT -->"
+            echo "## Deploying ${{ secrets.CLOUDFLARE_PROJECT_NAME }} with &nbsp;<a href='https://pages.dev'><img alt='Cloudflare Pages' src='https://user-images.githubusercontent.com/23264/106598434-9e719e00-654f-11eb-9e59-6167043cfa01.png' width='16'></a> &nbsp;Cloudflare Pages"
+            echo ""
+            echo "<table><tr><td><strong>Latest commit:</strong> </td><td>"
+            echo "<code>${{ env.COMMIT_HASH }}</code>"
+            echo "</td></tr>"
+            echo "<tr><td><strong>Status:</strong></td><td>&nbsp;✅&nbsp; Deploy successful!</td></tr>"
+            echo "<tr><td><strong>Preview URL:</strong></td><td>"
+            echo "<a href='${{ steps.deploy.outputs.deployment-url }}'>${{ steps.deploy.outputs.deployment-url }}</a>"
+            echo "</td></tr>"
+            echo "<tr><td><strong>Branch Preview URL:</strong></td><td>"
+            echo "<a href='${{ steps.deploy.outputs.deployment-alias-url }}'>${{ steps.deploy.outputs.deployment-alias-url }}</a>"
+            echo "</td></tr>"
+            echo "</table>"
+            echo ""
+            echo "[View logs](https://dash.cloudflare.com/?to=/:account/pages/view/${{ secrets.CLOUDFLARE_PROJECT_NAME }}/${{ steps.deploy.outputs.pages-deployment-id }})"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
+
+      - name: Check if PR exists
+        id: check_pr
+        run: |
+          if gh pr list --head "${{ github.ref_name }}" --json number --jq '. | length' | grep -q '1'; then
+            echo "PR_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "PR_EXISTS=false" >> $GITHUB_ENV
+          fi
+
+      - name: Add or Update Comment on Pull Request
+        if: env.PR_EXISTS == 'true'
+        run: |
+          PR_NUMBER=$(gh pr list --head "${{ github.ref_name }}" --json number -q '.[0].number')
+
+          # Fetch existing comments
+          COMMENTS=$(gh api repos/${{ github.repository }}/issues/${PR_NUMBER}/comments --jq '.[] | @base64')
+
+          COMMENT_ID=""
+
+          for COMMENT in $COMMENTS; do
+            COMMENT_JSON=$(echo $COMMENT | base64 --decode)
+            BODY=$(echo $COMMENT_JSON | jq -r '.body')
+            ID=$(echo $COMMENT_JSON | jq -r '.id')
+
+            if echo "$BODY" | grep -q '<!-- DEPLOYMENT_COMMENT -->'; then
+              COMMENT_ID=$ID
+              break
+            fi
+          done
+
+          if [ -n "$COMMENT_ID" ]; then
+            echo "Updating existing comment ID: $COMMENT_ID"
+            gh api \
+              --method PATCH \
+              -H "Accept: application/vnd.github.v3+json" \
+              /repos/${{ github.repository }}/issues/comments/$COMMENT_ID \
+              -f body="${{ env.GH_SAMPLE_COMMENT }}"
+          else
+            echo "Creating new comment"
+            gh pr comment $PR_NUMBER --body "${{ env.GH_SAMPLE_COMMENT }}"
+          fi
+
+      - name: Add to Job Summaries
+        run: echo "${{ env.GH_SAMPLE_COMMENT }}" >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,40 @@
+name: Find TODOs in pull requests
+
+on:
+  pull_request:
+
+jobs:
+  find-todos:
+    permissions:
+      contents: read
+      pull-requests: write
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: indigo-san/todo-comments-in-pr@v1
+        id: todos
+
+      - name: Generate a summary of the tasks
+        uses: actions/github-script@v7
+        id: summary
+        with:
+          result-encoding: string
+          script: |
+            const tasks = JSON.parse(String.raw`${{ steps.todos.outputs.tasks }}`);
+            let body = tasks.map(task => `https://github.com/${{ github.repository }}/blob/${{ github.sha }}/${task.fileName}#L${task.startLine}-L${task.endLine}`).join('\n');
+
+            if (tasks.length > 0) {
+              body = `以下のTODOコメントが見つかりました:\n\n${body}`;
+            } else {
+              body = 'TODOコメントは見つかりませんでした。';
+            }
+            return body;
+
+      - name: Comment on the pull request
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: todo-cooments
+          recreate: true
+          message: |
+            ${{ steps.summary.outputs.result }}

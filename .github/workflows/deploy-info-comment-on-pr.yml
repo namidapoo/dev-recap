@@ -1,0 +1,137 @@
+name: Deployment Info Comment on PR
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  comment_on_pr:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+
+      - name: Wait for 3 seconds
+        run: sleep 3
+
+      - name: Check if Deploy Workflow is Running
+        id: check_deploy
+        run: |
+          runs=$(gh run list --branch ${{ github.head_ref }} --workflow "Deploy to Cloudflare Pages" --json status --jq '.[] | select(.status == "in_progress")')
+          if [[ -n "$runs" ]]; then
+            echo "Deploy workflow is currently running. Exiting."
+            echo "DEPLOY_STATUS=running" >> $GITHUB_ENV
+            exit 0
+          else
+            echo "DEPLOY_STATUS=completed" >> $GITHUB_ENV
+          fi
+
+      - name: Add to Job Summaries if Deployment Running
+        if: env.DEPLOY_STATUS == 'running'
+        run: echo "✅ This workflow ended without executing anything because the deployment workflow was running." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Get Latest Commit Hash
+        if: env.DEPLOY_STATUS == 'completed'
+        id: get_commit
+        run: |
+          COMMIT_HASH=$(gh pr view ${{ github.event.pull_request.number }} --json commits -q ".commits[-1].oid")
+          echo "COMMIT_HASH=${COMMIT_HASH}" >> $GITHUB_ENV
+          SHORT_COMMIT_HASH=${COMMIT_HASH:0:7}
+          echo "SHORT_COMMIT_HASH=${SHORT_COMMIT_HASH}" >> $GITHUB_ENV
+
+      - name: Output Latest Commit Hash
+        if: env.DEPLOY_STATUS == 'completed'
+        run: echo "Latest Commit Hash ... ${{ env.COMMIT_HASH }}"
+
+      - name: Fetch latest deployment info and match with commit hash
+        if: env.DEPLOY_STATUS == 'completed'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PROJECT_NAME: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+        run: |
+          response=$(curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/$CLOUDFLARE_PROJECT_NAME/deployments" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Content-Type: application/json")
+
+          matching_deployment=$(echo "$response" | jq -r --arg commit "${{ env.COMMIT_HASH }}" '.result[] | select(.deployment_trigger.metadata.commit_hash == $commit)')
+
+          if [ -z "$matching_deployment" ]; then
+            echo "No deployment found for the latest commit hash."
+            exit 1
+          fi
+
+          deployment_url=$(echo "$matching_deployment" | jq -r '.url')
+          deployment_alias_url=$(echo "$matching_deployment" | jq -r '.aliases[0]')
+          pages_deployment_id=$(echo "$matching_deployment" | jq -r '.id')
+
+          echo "Matched Deploy URL: $deployment_url"
+          echo "Deploy Alias URL: $deployment_alias_url"
+          echo "Deploy ID: $pages_deployment_id"
+
+          echo "LATEST_DEPLOY_URL=$deployment_url" >> $GITHUB_ENV
+          echo "DEPLOY_ALIAS_URL=$deployment_alias_url" >> $GITHUB_ENV
+          echo "DEPLOY_ID=$pages_deployment_id" >> $GITHUB_ENV
+
+      - name: Create Comment Content
+        if: env.DEPLOY_STATUS == 'completed'
+        run: |
+          {
+            echo "GH_SAMPLE_COMMENT<<EOF"
+            echo "<!-- DEPLOYMENT_COMMENT -->"
+            echo "## Deploying ${{ secrets.CLOUDFLARE_PROJECT_NAME }} with &nbsp;<a href='https://pages.dev'><img alt='Cloudflare Pages' src='https://user-images.githubusercontent.com/23264/106598434-9e719e00-654f-11eb-9e59-6167043cfa01.png' width='16'></a> &nbsp;Cloudflare Pages"
+            echo ""
+            echo "<table><tr><td><strong>Latest commit:</strong> </td><td>"
+            echo "<code>${{ env.SHORT_COMMIT_HASH }}</code>"
+            echo "</td></tr>"
+            echo "<tr><td><strong>Status:</strong></td><td>&nbsp;✅&nbsp; Deploy successful!</td></tr>"
+            echo "<tr><td><strong>Preview URL:</strong></td><td>"
+            echo "<a href='${{ env.LATEST_DEPLOY_URL }}'>${{ env.LATEST_DEPLOY_URL }}</a>"
+            echo "</td></tr>"
+            echo "<tr><td><strong>Branch Preview URL:</strong></td><td>"
+            echo "<a href='${{ env.DEPLOY_ALIAS_URL }}'>${{ env.DEPLOY_ALIAS_URL }}</a>"
+            echo "</td></tr>"
+            echo "</table>"
+            echo ""
+            echo "[View logs](https://dash.cloudflare.com/?to=/:account/pages/view/${{ secrets.CLOUDFLARE_PROJECT_NAME }}/${{ env.DEPLOY_ID }})"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
+
+      - name: Add or Update Comment on Pull Request
+        if: env.DEPLOY_STATUS == 'completed'
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+
+          # Fetch existing comments
+          COMMENTS=$(gh api repos/${{ github.repository }}/issues/${PR_NUMBER}/comments --jq '.[] | @base64')
+
+          COMMENT_ID=""
+
+          for COMMENT in $COMMENTS; do
+            COMMENT_JSON=$(echo $COMMENT | base64 --decode)
+            BODY=$(echo $COMMENT_JSON | jq -r '.body')
+            ID=$(echo $COMMENT_JSON | jq -r '.id')
+
+            if echo "$BODY" | grep -q '<!-- DEPLOYMENT_COMMENT -->'; then
+              COMMENT_ID=$ID
+              break
+            fi
+          done
+
+          if [ -n "$COMMENT_ID" ]; then
+            echo "Updating existing comment ID: $COMMENT_ID"
+            gh api \
+              --method PATCH \
+              -H "Accept: application/vnd.github.v3+json" \
+              /repos/${{ github.repository }}/issues/comments/$COMMENT_ID \
+              -f body="${{ env.GH_SAMPLE_COMMENT }}"
+          else
+            echo "Creating new comment"
+            gh pr comment $PR_NUMBER --body "${{ env.GH_SAMPLE_COMMENT }}"
+          fi
+
+      - name: Add to Job Summaries
+        if: env.DEPLOY_STATUS == 'completed'
+        run: echo "${{ env.GH_SAMPLE_COMMENT }}" >> "$GITHUB_STEP_SUMMARY"

@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { fetchGitHubStats } from "./fetchGitHubStats";
+import { GitHubGrass } from "./github-grass";
 
 export default async function Page() {
 	const session = await auth();
@@ -14,7 +15,9 @@ export default async function Page() {
 	return (
 		<div className="min-h-dvh py-4">
 			<h1 className="text-center">Contributions for @{session.user.login}</h1>
-			<pre>{JSON.stringify(data, null, 2)}</pre>
+			<div className="flex justify-center py-8">
+				<GitHubGrass weeklyContributions={data.weeklyContributions} />
+			</div>
 		</div>
 	);
 }

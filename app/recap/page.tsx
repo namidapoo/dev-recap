@@ -15,9 +15,9 @@ export default async function Page() {
 	});
 
 	return (
-		<div className="min-h-dvh py-4">
+		<div className="min-h-dvh py-4 w-5/6 max-w-[844px] mx-auto">
 			<h1 className="text-center">Contributions for @{session.user.login}</h1>
-			<div className="flex justify-center py-8">
+			<div className="py-8">
 				<GitHubGrass weeklyContributions={data.weeklyContributions} />
 			</div>
 		</div>

@@ -10,6 +10,8 @@ export default async function Home() {
 	const session = await auth();
 	if (!session?.user) return null;
 
+	console.log(session);
+
 	return (
 		<div className="flex min-h-dvh items-center justify-center bg-gradient-to-b from-pink-300 to-blue-300 p-4">
 			<div className="w-full max-w-md space-y-8 text-center">

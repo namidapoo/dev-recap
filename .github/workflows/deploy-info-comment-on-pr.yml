@@ -19,7 +19,11 @@ jobs:
       - name: Check if Deploy Workflow is Running
         id: check_deploy
         run: |
-          runs=$(gh run list --branch ${{ github.head_ref }} --workflow "Deploy to Cloudflare Pages" --json status --jq '.[] | select(.status == "in_progress")')
+          runs=$(gh run list --branch "${{ github.head_ref }}" \
+                             --workflow "Deploy to Cloudflare Pages" \
+                             --json status \
+                             --jq '.[] | select(.status == "in_progress")' 2>/dev/null)
+
           if [[ -n "$runs" ]]; then
             echo "Deploy workflow is currently running. Exiting."
             echo "DEPLOY_STATUS=running" >> $GITHUB_ENV

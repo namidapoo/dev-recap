@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth";
 import { fetchGitHubStats } from "./fetchGitHubStats";
 import { GitHubGrass } from "./github-grass";
 
+export const runtime = "edge";
+
 export default async function Page() {
 	const session = await auth();
 	if (!session?.user) return null;

@@ -4,20 +4,15 @@ type Props = {
 	weeklyContributions: { date: string; contributionCount: number }[];
 };
 
-// 芝生(草)を描画するためのコンポーネント
 export const GitHubGrass: FC<Props> = ({ weeklyContributions }) => {
-	// 7日ずつまとめて週ごとに分割し、日曜が先頭になるように並べ替え
 	const weeks = chunkByWeek(weeklyContributions);
 
 	return (
-		<div className="space-y-4">
-			<div className="flex gap-1">
+		<div className="w-full space-y-4">
+			<div className="flex justify-center overflow-x-auto gap-1">
 				{weeks.map((daysInWeek, weekIndex) => (
-					<div
-						// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-						key={weekIndex}
-						className="space-y-1"
-					>
+					// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+					<div key={weekIndex} className="space-y-1">
 						{daysInWeek.map((day, dayIndex) => {
 							const color = getContributionColor(day.contributionCount);
 							return (
@@ -33,14 +28,16 @@ export const GitHubGrass: FC<Props> = ({ weeklyContributions }) => {
 					</div>
 				))}
 			</div>
-			<ActivityLevelIndicator />
+			<div className="flex justify-end">
+				<ActivityLevelIndicator />
+			</div>
 		</div>
 	);
 };
 
 const ActivityLevelIndicator = () => {
 	return (
-		<div className="flex gap-1 items-center justify-end text-sm">
+		<div className="flex gap-1 items-center text-sm">
 			<p>Less</p>
 			{contributionColors.map(({ min, max, color }) => (
 				<div
@@ -77,7 +74,7 @@ const getContributionColor = (count: number) => {
 const chunkByWeek = (
 	contributions: { date: string; contributionCount: number }[],
 ) => {
-	// 1. 日付昇順にソート（念のため）
+	// 1. 日付昇順にソート
 	const sorted = [...contributions].sort(
 		(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
 	);

@@ -10,27 +10,46 @@ export const GitHubGrass: FC<Props> = ({ weeklyContributions }) => {
 	const weeks = chunkByWeek(weeklyContributions);
 
 	return (
-		<div className="flex gap-1">
-			{weeks.map((daysInWeek, weekIndex) => (
+		<div className="space-y-4">
+			<div className="flex gap-1">
+				{weeks.map((daysInWeek, weekIndex) => (
+					<div
+						// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+						key={weekIndex}
+						className="space-y-1"
+					>
+						{daysInWeek.map((day, dayIndex) => {
+							const color = getContributionColor(day.contributionCount);
+							return (
+								<div
+									// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+									key={dayIndex}
+									title={`${day.date}: ${day.contributionCount} contributions`}
+									className="w-3 h-3 rounded-[2px]"
+									style={{ backgroundColor: color }}
+								/>
+							);
+						})}
+					</div>
+				))}
+			</div>
+			<ActivityLevelIndicator />
+		</div>
+	);
+};
+
+const ActivityLevelIndicator = () => {
+	return (
+		<div className="flex gap-1 items-center justify-end text-sm">
+			<p>Less</p>
+			{contributionColors.map(({ min, max, color }) => (
 				<div
-					// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-					key={weekIndex}
-					className="space-y-1"
-				>
-					{daysInWeek.map((day, dayIndex) => {
-						const color = getContributionColor(day.contributionCount);
-						return (
-							<div
-								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-								key={dayIndex}
-								title={`${day.date}: ${day.contributionCount} contributions`}
-								className="w-3 h-3 rounded-[2px]"
-								style={{ backgroundColor: color }}
-							/>
-						);
-					})}
-				</div>
+					key={`${min}-${max}`}
+					className="w-3 h-3 rounded-[2px]"
+					style={{ backgroundColor: color }}
+				/>
 			))}
+			<p>More</p>
 		</div>
 	);
 };

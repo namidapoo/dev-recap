@@ -18,7 +18,7 @@ export default async function Home() {
 				</h1>
 
 				<div className="space-y-3">
-					<p className="font-semibold text-2xl">Hi, {session.user.name} !</p>
+					<p className="font-semibold text-2xl">Hi, @{session.user.login} !</p>
 					<p className="text-base text-gray-600 lg:text-lg">
 						1年間おつかれさまでした。
 					</p>

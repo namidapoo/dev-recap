@@ -9,6 +9,21 @@ export default {
 	],
 	theme: {
 		extend: {
+			keyframes: {
+				fadeInBg: {
+					"0%": {
+						opacity: "1",
+						backgroundColor: "#ebedf0",
+					},
+					"100%": {
+						opacity: "1",
+						backgroundColor: "var(--final-bg)",
+					},
+				},
+			},
+			animation: {
+				fadeInBg: "fadeInBg 0.3s ease-out both",
+			},
 			colors: {
 				background: "hsl(var(--background))",
 				foreground: "hsl(var(--foreground))",

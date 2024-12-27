@@ -1,11 +1,27 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { SkipForward } from "lucide-react";
 import type { FC } from "react";
+import { useState } from "react";
 
 type Props = {
 	weeklyContributions: { date: string; contributionCount: number }[];
 };
 
 export const GitHubGrass: FC<Props> = ({ weeklyContributions }) => {
+	// アニメーションをスキップするか
+	const [skipAnimation, setSkipAnimation] = useState<boolean>(false);
+	// 最後のセルのアニメーションが終了したか
+	const [hasAnimationEnded, setHasAnimationEnded] = useState<boolean>(false);
+
 	const weeks = chunkByWeek(weeklyContributions);
+
+	// 「最後のセルの onAnimationEnd」ハンドラ
+	const handleLastCellAnimationEnd = () => {
+		setHasAnimationEnded(true);
+	};
 
 	return (
 		<div className="w-full space-y-4">
@@ -14,27 +30,75 @@ export const GitHubGrass: FC<Props> = ({ weeklyContributions }) => {
 					// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 					<div key={weekIndex} className="space-y-1">
 						{daysInWeek.map((day, dayIndex) => {
-							const color = getContributionColor(day.contributionCount);
+							const finalColor = getContributionColor(day.contributionCount);
+
+							// セルごとの遅延
+							const cellDelay = (weekIndex * 7 + dayIndex) * 0.03;
+
+							// 最後のセルかどうかを判定
+							const isLastCell =
+								weekIndex === weeks.length - 1 &&
+								dayIndex === daysInWeek.length - 1;
+
+							// スキップON or アニメーション終了後は最終色を即時表示
+							const isFinal = skipAnimation || hasAnimationEnded;
+
+							// スキップOFFかつアニメーションがまだ終わっていない場合のみ、animation適用
+							const classNameWhenNotSkipped =
+								"w-3 h-3 rounded-[2px] animate-fadeInBg";
+							const classNameWhenSkipped = "w-3 h-3 rounded-[2px]";
+
+							// スタイル切り替え
+							const styleWhenAnimating = {
+								["--final-bg" as string]: finalColor,
+								animationDelay: `${cellDelay}s`,
+							};
+							const styleWhenDone = {
+								backgroundColor: finalColor,
+							};
+
 							return (
 								<div
 									// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 									key={dayIndex}
+									className={cn(
+										isFinal ? classNameWhenSkipped : classNameWhenNotSkipped,
+									)}
+									style={isFinal ? styleWhenDone : styleWhenAnimating}
 									title={`${day.date}: ${day.contributionCount} contributions`}
-									className="w-3 h-3 rounded-[2px]"
-									style={{ backgroundColor: color }}
+									// 最後のセルだけアニメーション終了をキャッチして hasAnimationEnded = true にする
+									onAnimationEnd={
+										// スキップOFFかつまだアニメが終わっていなくて、かつ最後のセル
+										!skipAnimation && !hasAnimationEnded && isLastCell
+											? handleLastCellAnimationEnd
+											: undefined
+									}
 								/>
 							);
 						})}
 					</div>
 				))}
 			</div>
-			<div className="flex justify-end">
+			<div className="flex gap-2 items-center justify-end">
 				<ActivityLevelIndicator />
+				<Button
+					variant="outline"
+					size="icon"
+					// アニメが終了 or スキップ済み の場合にdisabled
+					disabled={skipAnimation || hasAnimationEnded}
+					onClick={() => setSkipAnimation(true)}
+					className="h-7 w-7"
+				>
+					<SkipForward className="text-gray-500" />
+				</Button>
 			</div>
 		</div>
 	);
 };
 
+/**
+ * アクティビティレベルのインジケータ
+ */
 const ActivityLevelIndicator = () => {
 	return (
 		<div className="flex gap-1 items-center text-sm">
@@ -60,10 +124,10 @@ const contributionColors = [
 ];
 
 const getContributionColor = (count: number) => {
-	const color = contributionColors.find(
+	const colorObj = contributionColors.find(
 		({ min, max }) => count >= min && count <= max,
 	);
-	return color ? color.color : "#ebedf0";
+	return colorObj ? colorObj.color : "#ebedf0";
 };
 
 /**

@@ -11,8 +11,17 @@ type Props = {
 };
 
 export const GitHubGrass: FC<Props> = ({ weeklyContributions }) => {
+	// アニメーションをスキップするか
 	const [skipAnimation, setSkipAnimation] = useState<boolean>(false);
+	// 最後のセルのアニメーションが終了したか
+	const [hasAnimationEnded, setHasAnimationEnded] = useState<boolean>(false);
+
 	const weeks = chunkByWeek(weeklyContributions);
+
+	// 「最後のセルの onAnimationEnd」ハンドラ
+	const handleLastCellAnimationEnd = () => {
+		setHasAnimationEnded(true);
+	};
 
 	return (
 		<div className="w-full space-y-4">
@@ -26,30 +35,44 @@ export const GitHubGrass: FC<Props> = ({ weeklyContributions }) => {
 							// セルごとの遅延
 							const cellDelay = (weekIndex * 7 + dayIndex) * 0.03;
 
+							// 最後のセルかどうかを判定
+							const isLastCell =
+								weekIndex === weeks.length - 1 &&
+								dayIndex === daysInWeek.length - 1;
+
+							// スキップON or アニメーション終了後は最終色を即時表示
+							const isFinal = skipAnimation || hasAnimationEnded;
+
+							// スキップOFFかつアニメーションがまだ終わっていない場合のみ、animation適用
 							const classNameWhenNotSkipped =
 								"w-3 h-3 rounded-[2px] animate-fadeInBg";
 							const classNameWhenSkipped = "w-3 h-3 rounded-[2px]";
+
+							// スタイル切り替え
+							const styleWhenAnimating = {
+								["--final-bg" as string]: finalColor,
+								animationDelay: `${cellDelay}s`,
+							};
+							const styleWhenDone = {
+								backgroundColor: finalColor,
+							};
 
 							return (
 								<div
 									// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 									key={dayIndex}
 									className={cn(
-										skipAnimation
-											? classNameWhenSkipped
-											: classNameWhenNotSkipped,
+										isFinal ? classNameWhenSkipped : classNameWhenNotSkipped,
 									)}
-									style={
-										skipAnimation
-											? {
-													backgroundColor: finalColor,
-												}
-											: {
-													["--final-bg" as string]: finalColor,
-													animationDelay: `${cellDelay}s`,
-												}
-									}
+									style={isFinal ? styleWhenDone : styleWhenAnimating}
 									title={`${day.date}: ${day.contributionCount} contributions`}
+									// 最後のセルだけアニメーション終了をキャッチして hasAnimationEnded = true にする
+									onAnimationEnd={
+										// スキップOFFかつまだアニメが終わっていなくて、かつ最後のセル
+										!skipAnimation && !hasAnimationEnded && isLastCell
+											? handleLastCellAnimationEnd
+											: undefined
+									}
 								/>
 							);
 						})}
@@ -61,8 +84,9 @@ export const GitHubGrass: FC<Props> = ({ weeklyContributions }) => {
 				<Button
 					variant="outline"
 					size="icon"
-					onClick={() => setSkipAnimation(!skipAnimation)}
-					disabled={skipAnimation}
+					// アニメが終了 or スキップ済み の場合にdisabled
+					disabled={skipAnimation || hasAnimationEnded}
+					onClick={() => setSkipAnimation(true)}
 					className="h-7 w-7"
 				>
 					<SkipForward className="text-gray-500" />
@@ -72,6 +96,9 @@ export const GitHubGrass: FC<Props> = ({ weeklyContributions }) => {
 	);
 };
 
+/**
+ * アクティビティレベルのインジケータ
+ */
 const ActivityLevelIndicator = () => {
 	return (
 		<div className="flex gap-1 items-center text-sm">

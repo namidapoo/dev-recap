@@ -14,14 +14,21 @@ export const GitHubGrass: FC<Props> = ({ weeklyContributions }) => {
 					// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 					<div key={weekIndex} className="space-y-1">
 						{daysInWeek.map((day, dayIndex) => {
-							const color = getContributionColor(day.contributionCount);
+							const finalColor = getContributionColor(day.contributionCount);
+
+							// セルごとの遅延
+							const cellDelay = (weekIndex * 7 + dayIndex) * 0.03;
+
 							return (
 								<div
 									// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 									key={dayIndex}
+									className="w-3 h-3 rounded-[2px] animate-fadeInBg"
+									style={{
+										["--final-bg" as string]: finalColor,
+										animationDelay: `${cellDelay}s`,
+									}}
 									title={`${day.date}: ${day.contributionCount} contributions`}
-									className="w-3 h-3 rounded-[2px]"
-									style={{ backgroundColor: color }}
 								/>
 							);
 						})}
@@ -60,10 +67,10 @@ const contributionColors = [
 ];
 
 const getContributionColor = (count: number) => {
-	const color = contributionColors.find(
+	const colorObj = contributionColors.find(
 		({ min, max }) => count >= min && count <= max,
 	);
-	return color ? color.color : "#ebedf0";
+	return colorObj ? colorObj.color : "#ebedf0";
 };
 
 /**

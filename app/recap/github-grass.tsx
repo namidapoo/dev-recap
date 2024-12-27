@@ -1,10 +1,17 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { SkipForward } from "lucide-react";
 import type { FC } from "react";
+import { useState } from "react";
 
 type Props = {
 	weeklyContributions: { date: string; contributionCount: number }[];
 };
 
 export const GitHubGrass: FC<Props> = ({ weeklyContributions }) => {
+	const [skipAnimation, setSkipAnimation] = useState<boolean>(false);
 	const weeks = chunkByWeek(weeklyContributions);
 
 	return (
@@ -19,15 +26,29 @@ export const GitHubGrass: FC<Props> = ({ weeklyContributions }) => {
 							// セルごとの遅延
 							const cellDelay = (weekIndex * 7 + dayIndex) * 0.03;
 
+							const classNameWhenNotSkipped =
+								"w-3 h-3 rounded-[2px] animate-fadeInBg";
+							const classNameWhenSkipped = "w-3 h-3 rounded-[2px]";
+
 							return (
 								<div
 									// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 									key={dayIndex}
-									className="w-3 h-3 rounded-[2px] animate-fadeInBg"
-									style={{
-										["--final-bg" as string]: finalColor,
-										animationDelay: `${cellDelay}s`,
-									}}
+									className={cn(
+										skipAnimation
+											? classNameWhenSkipped
+											: classNameWhenNotSkipped,
+									)}
+									style={
+										skipAnimation
+											? {
+													backgroundColor: finalColor,
+												}
+											: {
+													["--final-bg" as string]: finalColor,
+													animationDelay: `${cellDelay}s`,
+												}
+									}
 									title={`${day.date}: ${day.contributionCount} contributions`}
 								/>
 							);
@@ -35,8 +56,17 @@ export const GitHubGrass: FC<Props> = ({ weeklyContributions }) => {
 					</div>
 				))}
 			</div>
-			<div className="flex justify-end">
+			<div className="flex gap-2 items-center justify-end">
 				<ActivityLevelIndicator />
+				<Button
+					variant="outline"
+					size="icon"
+					onClick={() => setSkipAnimation(!skipAnimation)}
+					disabled={skipAnimation}
+					className="h-7 w-7"
+				>
+					<SkipForward className="text-gray-500" />
+				</Button>
 			</div>
 		</div>
 	);

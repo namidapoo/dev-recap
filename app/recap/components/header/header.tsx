@@ -18,14 +18,14 @@ export const Header: FC = () => {
 		<SessionProvider>
 			<header
 				className={cn(
-					"flex h-16 items-center justify-between sticky top-0 z-10 bg-background shadow-md dark:shadow-current",
+					"flex h-16 items-center justify-between sticky top-0 z-10 bg-background shadow-md dark:shadow-current px-6",
 					isOnTop && "hidden",
 				)}
 			>
-				<div className="flex items-center gap-2 px-4">
+				<div className="flex items-center gap-2">
 					<Breadcrumbs />
 				</div>
-				<div className="flex items-center gap-2 lg:gap-4 px-4">
+				<div className="flex items-center gap-6">
 					<Link
 						href="https://github.com/namidapoo/dev-recap"
 						target="_blank"

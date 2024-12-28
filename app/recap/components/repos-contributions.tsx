@@ -14,7 +14,7 @@ export const ReposContributions: FC<Props> = ({ data }) => {
 
 				return (
 					<div key={repos.nameWithOwner} className="flex items-center">
-						<MapPinHouse className="h-6 w-6" />
+						<MapPinHouse className="h-6 w-6 text-muted-foreground" />
 						<div className="ml-4 space-y-1">
 							<a
 								href={`https://github.com/${repos.nameWithOwner}`}

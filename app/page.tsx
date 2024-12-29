@@ -14,11 +14,12 @@ export default async function Home() {
 	console.log(session);
 
 	return (
-		<div className="h-full flex justify-center pt-24 px-4 text-accent-foreground lg:items-center">
-			<div className="w-full max-w-md space-y-8 text-center">
+		<div className="grid grid-cols-1 md:grid-cols-3 gap-8 h-full pt-24 px-4 text-accent-foreground md:items-center justify-items-center">
+			<div className="col-span-1 w-full max-w-md space-y-8 text-center">
 				<h1 className="font-bold text-2xl text-blue-600 lg:text-5xl">
 					Dev Recap 2024
 				</h1>
+
 				<div className="space-y-3">
 					{session.user.image && (
 						<Image
@@ -30,7 +31,7 @@ export default async function Home() {
 							priority
 						/>
 					)}
-					<p className="font-semibold text-2xl">Hi, @{session.user.login} !</p>
+					<p className="font-semibold text-xl">@{session.user.login}</p>
 					<p className="text-base lg:text-lg">今年もおつかれさまでした。</p>
 					<p className="text-base lg:text-lg">
 						あなたの1年間を振り返りましょう🥳
@@ -59,6 +60,16 @@ export default async function Home() {
 						振り返りを見る
 					</Link>
 				</Button>
+			</div>
+
+			<div className="hidden md:block col-span-2">
+				<Image
+					src="/image.png"
+					alt="Illustration"
+					width={700}
+					height={800}
+					className="w-full h-auto mx-auto"
+				/>
 			</div>
 		</div>
 	);

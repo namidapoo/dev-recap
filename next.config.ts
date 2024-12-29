@@ -6,7 +6,14 @@ const createConfig = async (): Promise<NextConfig> => {
 		await setupDevPlatform();
 	}
 	const nextConfig: NextConfig = {
-		/* config options here */
+		images: {
+			remotePatterns: [
+				{
+					protocol: "https",
+					hostname: "avatars.githubusercontent.com",
+				},
+			],
+		},
 	};
 	return nextConfig;
 };

@@ -188,10 +188,13 @@ export const OverView: FC<Props> = async ({ data }) => {
 						<CardHeader>
 							<CardTitle>リポジトリごとの統計</CardTitle>
 							<CardDescription>
-								{data.repositoriesByCommitCount.length === 0
-									? "データがありません。"
-									: `あなたが最もコミットしたリポジトリは{" "}
-								<b>${data.repositoriesByCommitCount[0].nameWithOwner}</b> です。`}
+							  {data.repositoriesByCommitCount.length === 0 ? (
+							    "データがありません。"
+							  ) : (
+							    <>
+							      あなたが最もコミットしたリポジトリは <b>{data.repositoriesByCommitCount[0].nameWithOwner}</b> です。
+							    </>
+							  )}
 							</CardDescription>
 						</CardHeader>
 						<CardContent>

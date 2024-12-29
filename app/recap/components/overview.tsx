@@ -18,6 +18,7 @@ import {
 	UsersRound,
 } from "lucide-react";
 import type { FC } from "react";
+import { calculateChangeRate } from "./calculate-change-rate";
 import { LanguagesUsageGraph } from "./graph/languages";
 import { MonthlyContributionsGraph } from "./graph/monthly";
 import { WeeklyContributionsGraph } from "./graph/weekly";
@@ -98,12 +99,10 @@ export const OverView: FC<Props> = async ({ data }) => {
 							<p className="text-xs text-muted-foreground">
 								前年と比較して
 								<b>
-									{(
-										((data.totalCommitCount -
-											data.previousYearStats.totalCommitCount) /
-											data.previousYearStats.totalCommitCount) *
-										100
-									).toFixed(2)}
+									{calculateChangeRate(
+										data.previousYearStats.totalCommitCount,
+										data.totalCommitCount,
+									)}
 								</b>
 								% 増加しました。
 							</p>
@@ -123,12 +122,10 @@ export const OverView: FC<Props> = async ({ data }) => {
 							<p className="text-xs text-muted-foreground">
 								前年と比較して
 								<b>
-									{(
-										((data.closedIssuesAssigned -
-											data.previousYearStats.closedIssuesAssignedCount) /
-											data.previousYearStats.closedIssuesAssignedCount) *
-										100
-									).toFixed(2)}
+									{calculateChangeRate(
+										data.previousYearStats.closedIssuesAssignedCount,
+										data.closedIssuesAssigned,
+									)}
 								</b>
 								% 増加しました。
 							</p>
@@ -148,12 +145,10 @@ export const OverView: FC<Props> = async ({ data }) => {
 							<p className="text-xs text-muted-foreground">
 								前年と比較して
 								<b>
-									{(
-										((data.openedPullRequests -
-											data.previousYearStats.openedPullRequests) /
-											data.previousYearStats.openedPullRequests) *
-										100
-									).toFixed(2)}
+									{calculateChangeRate(
+										data.previousYearStats.openedPullRequests,
+										data.openedPullRequests,
+									)}
 								</b>
 								% 増加しました。
 							</p>
@@ -173,12 +168,10 @@ export const OverView: FC<Props> = async ({ data }) => {
 							<p className="text-xs text-muted-foreground">
 								前年と比較して
 								<b>
-									{(
-										((data.reviewedPullRequests -
-											data.previousYearStats.reviewedPullRequests) /
-											data.previousYearStats.reviewedPullRequests) *
-										100
-									).toFixed(2)}
+									{calculateChangeRate(
+										data.previousYearStats.reviewedPullRequests,
+										data.reviewedPullRequests,
+									)}
 								</b>
 								% 増加しました。
 							</p>

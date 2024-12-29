@@ -50,9 +50,11 @@ export const MonthlyContributionsGraph: FC<Props> = ({ monthlyData }) => {
 		<Card className="h-full flex flex-col justify-center">
 			<CardHeader className="border-b p-0">
 				<div className="flex flex-col justify-center gap-1 px-6 py-5">
-					<CardTitle>Monthly Contributions</CardTitle>
+					<CardTitle>月別の統計</CardTitle>
 					<CardDescription>
-						{maxMonthData.month}: {maxMonthData.contributionCount} Contributions
+						あなたが最も活動したのは <b>{maxMonthData.month}</b> で、{" "}
+						<b>{maxMonthData.contributionCount}</b>{" "}
+						回のコントリビューションを行いました。
 					</CardDescription>
 				</div>
 			</CardHeader>

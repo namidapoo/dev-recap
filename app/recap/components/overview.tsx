@@ -43,7 +43,7 @@ export const OverView: FC<Props> = async ({ data }) => {
 						<AvatarFallback>{session.user?.login}</AvatarFallback>
 					</Avatar>
 					<CardHeader className="pr-24 pb-2">
-						<CardTitle className="text-xl font-bold truncate">
+						<CardTitle className="text-xl truncate">
 							<a
 								href={`https://github.com/${session.user.login}`}
 								target="_blank"
@@ -52,7 +52,7 @@ export const OverView: FC<Props> = async ({ data }) => {
 							>
 								{session.user.login}
 							</a>
-							<p className="text-xs text-muted-foreground truncate">
+							<p className="text-xs text-muted-foreground truncate font-normal">
 								Joined on{" "}
 								{format(new Date(data.userProfile.joinedDate), "MMMM dd, yyyy")}
 							</p>
@@ -85,8 +85,8 @@ export const OverView: FC<Props> = async ({ data }) => {
 				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle className="text-sm font-medium">
-								Total Commits
+							<CardTitle className="font-bold text-blue-700">
+								総コミット
 							</CardTitle>
 							<GitCommitHorizontal className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
@@ -96,21 +96,23 @@ export const OverView: FC<Props> = async ({ data }) => {
 								{data.totalCommitCount.toLocaleString()}
 							</div>
 							<p className="text-xs text-muted-foreground">
-								+
-								{(
-									((data.totalCommitCount -
-										data.previousYearStats.totalCommitCount) /
-										data.previousYearStats.totalCommitCount) *
-									100
-								).toFixed(2)}
-								% from last year
+								前年と比較して
+								<b>
+									{(
+										((data.totalCommitCount -
+											data.previousYearStats.totalCommitCount) /
+											data.previousYearStats.totalCommitCount) *
+										100
+									).toFixed(2)}
+								</b>
+								% 増加しました。
 							</p>
 						</CardContent>
 					</Card>
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle className="text-sm font-medium">
-								Completed Issues
+							<CardTitle className="font-bold text-blue-700">
+								完了したIssue
 							</CardTitle>
 							<SquareKanban className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
@@ -119,20 +121,24 @@ export const OverView: FC<Props> = async ({ data }) => {
 								{data.closedIssuesAssigned.toLocaleString()}
 							</div>
 							<p className="text-xs text-muted-foreground">
-								+
-								{(
-									((data.closedIssuesAssigned -
-										data.previousYearStats.closedIssuesAssignedCount) /
-										data.previousYearStats.closedIssuesAssignedCount) *
-									100
-								).toFixed(2)}
-								% from last year
+								前年と比較して
+								<b>
+									{(
+										((data.closedIssuesAssigned -
+											data.previousYearStats.closedIssuesAssignedCount) /
+											data.previousYearStats.closedIssuesAssignedCount) *
+										100
+									).toFixed(2)}
+								</b>
+								% 増加しました。
 							</p>
 						</CardContent>
 					</Card>
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle className="text-sm font-medium">Created PRs</CardTitle>
+							<CardTitle className="font-bold text-blue-700">
+								作成したPR
+							</CardTitle>
 							<GitPullRequestCreateArrow className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
@@ -140,21 +146,23 @@ export const OverView: FC<Props> = async ({ data }) => {
 								{data.openedPullRequests.toLocaleString()}
 							</div>
 							<p className="text-xs text-muted-foreground">
-								+
-								{(
-									((data.openedPullRequests -
-										data.previousYearStats.openedPullRequests) /
-										data.previousYearStats.openedPullRequests) *
-									100
-								).toFixed(2)}
-								% from last year
+								前年と比較して
+								<b>
+									{(
+										((data.openedPullRequests -
+											data.previousYearStats.openedPullRequests) /
+											data.previousYearStats.openedPullRequests) *
+										100
+									).toFixed(2)}
+								</b>
+								% 増加しました。
 							</p>
 						</CardContent>
 					</Card>
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle className="text-sm font-medium">
-								Reviewed PRs
+							<CardTitle className="font-bold text-blue-700">
+								レビューしたPR
 							</CardTitle>
 							<GitPullRequestCreate className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
@@ -163,14 +171,16 @@ export const OverView: FC<Props> = async ({ data }) => {
 								{data.reviewedPullRequests.toLocaleString()}
 							</div>
 							<p className="text-xs text-muted-foreground">
-								+
-								{(
-									((data.reviewedPullRequests -
-										data.previousYearStats.reviewedPullRequests) /
-										data.previousYearStats.reviewedPullRequests) *
-									100
-								).toFixed(2)}
-								% from last year
+								前年と比較して
+								<b>
+									{(
+										((data.reviewedPullRequests -
+											data.previousYearStats.reviewedPullRequests) /
+											data.previousYearStats.reviewedPullRequests) *
+										100
+									).toFixed(2)}
+								</b>
+								% 増加しました。
 							</p>
 						</CardContent>
 					</Card>
@@ -183,9 +193,10 @@ export const OverView: FC<Props> = async ({ data }) => {
 					</div>
 					<Card className="col-span-4 md:col-span-3 order-3 md:order-2">
 						<CardHeader>
-							<CardTitle>Repositories with Contributions</CardTitle>
+							<CardTitle>リポジトリごとの統計</CardTitle>
 							<CardDescription>
-								Top 5 repositories by contributions count.
+								あなたが最もコミットしたリポジトリは{" "}
+								<b>{data.repositoriesByCommitCount[0].nameWithOwner}</b> です。
 							</CardDescription>
 						</CardHeader>
 						<CardContent>

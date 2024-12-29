@@ -50,10 +50,11 @@ export const WeeklyContributionsGraph: FC<Props> = ({ dayOfWeekData }) => {
 		<Card className="h-full flex flex-col justify-center">
 			<CardHeader className="border-b p-0">
 				<div className="flex flex-col justify-center gap-1 px-6 py-5">
-					<CardTitle>Average Contributions by Day of Week</CardTitle>
+					<CardTitle>曜日別の統計</CardTitle>
 					<CardDescription>
-						{maxMonthData.dayOfWeek}: {maxMonthData.averageContributions}{" "}
-						Contributions
+						あなたが最も活動したのは <b>{maxMonthData.dayOfWeek}</b> で、 平均{" "}
+						<b>{maxMonthData.averageContributions}</b>{" "}
+						回のコントリビューションを行いました。
 					</CardDescription>
 				</div>
 			</CardHeader>

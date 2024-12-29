@@ -121,12 +121,12 @@ export type Stats = {
 	newlyCreatedRepositoryCount: number; // 2024年内に作成したリポジトリ数
 
 	monthlyContributions: {
-		month: string; // "January", "February", ...
+		month: string; // "1月", "2月", ...
 		contributionCount: number; // 月ごとの貢献数
 	}[];
 
 	averageContributionsByDayOfWeek: {
-		dayOfWeek: string; // "Sunday", "Monday", ...
+		dayOfWeek: string; // "日曜日", "月曜日", ...
 		averageContributions: number; // 曜日ごとの平均貢献数
 	}[];
 
@@ -369,20 +369,6 @@ export const fetchGitHubStats = async ({
 	}).length;
 
 	// 月ごとの貢献数を集計
-	const monthNames = [
-		"January",
-		"February",
-		"March",
-		"April",
-		"May",
-		"June",
-		"July",
-		"August",
-		"September",
-		"October",
-		"November",
-		"December",
-	];
 	type MonthlyStats = {
 		[yearMonthKey: string]: number; // "YYYY-3" のように year + monthIndex をキーに
 	};
@@ -399,7 +385,8 @@ export const fetchGitHubStats = async ({
 			const [_, monthIndexStr] = key.split("-");
 			const idx = Number.parseInt(monthIndexStr, 10);
 			return {
-				month: monthNames[idx],
+				// month: monthNames[idx],
+				month: `${idx + 1}月`,
 				contributionCount: total,
 			};
 		},
@@ -407,13 +394,13 @@ export const fetchGitHubStats = async ({
 
 	// 曜日ごとの平均貢献数を集計
 	const dayOfWeekMap = [
-		"Sunday",
-		"Monday",
-		"Tuesday",
-		"Wednesday",
-		"Thursday",
-		"Friday",
-		"Saturday",
+		"日曜日",
+		"月曜日",
+		"火曜日",
+		"水曜日",
+		"木曜日",
+		"金曜日",
+		"土曜日",
 	];
 	type DayOfWeekStats = { total: number; count: number };
 	// 曜日ごとの合計・件数を初期化
@@ -423,7 +410,7 @@ export const fetchGitHubStats = async ({
 	}));
 	// 曜日ごとに合計・件数を集計
 	for (const day of dailyContributions) {
-		const w = new Date(day.date).getDay(); // 0=Sunday, 1=Monday, ...
+		const w = new Date(day.date).getDay(); // 0=日曜日, 1=月曜日, ...
 		dayOfWeekStats[w].total += day.contributionCount;
 		dayOfWeekStats[w].count += 1;
 	}

@@ -33,7 +33,7 @@ export const ReposContributions: FC<Props> = ({ data }) => {
 								<p className="text-sm text-muted-foreground">{owner}</p>
 							</a>
 						</div>
-						<div className="ml-auto font-medium">
+						<div className="ml-auto font-semibold">
 							+{repos.commitCount.toLocaleString()}
 						</div>
 					</div>

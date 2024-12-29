@@ -94,9 +94,9 @@ export const LanguagesUsageGraph: FC<Props> = ({ data }) => {
 	return (
 		<Card className="flex flex-col py-[0.42rem]">
 			<CardHeader className="items-start pb-0">
-				<CardTitle>Yearly Language Usage</CardTitle>
+				<CardTitle>言語の使用率</CardTitle>
 				<CardDescription>
-					This chart represents your yearly commit share by language.
+					あなたが最も使用した言語は <b>{limitedData[0].language}</b> です。
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="flex-1 pb-0">

@@ -61,7 +61,7 @@ export const OverView: FC<Props> = async ({ data }) => {
 					</CardHeader>
 					<CardContent className="pr-24 space-y-1">
 						<div className="text-sm text-muted-foreground font-bold italic truncate">
-							{data.userProfile.bio && "{data.userProfile.bio}"}
+							{data.userProfile.bio ?? ""}
 						</div>
 						<div className="flex items-center gap-2 text-sm text-muted-foreground truncate">
 							<UsersRound className="h-4 w-4" />

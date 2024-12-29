@@ -18,7 +18,7 @@ export const Header: FC = () => {
 		<SessionProvider>
 			<header
 				className={cn(
-					"flex h-16 items-center justify-between sticky top-0 z-10 bg-background shadow-md dark:shadow-current px-6",
+					"flex h-16 items-center justify-between bg-background border-b dark:shadow-current p-6",
 					isOnTop && "hidden",
 				)}
 			>

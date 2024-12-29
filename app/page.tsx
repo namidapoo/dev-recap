@@ -64,11 +64,11 @@ export default async function Home() {
 
 			<div className="hidden md:block col-span-2">
 				<Image
-					src="/image.png"
-					alt="Illustration"
+					src="/overview.png"
+					alt="Overview"
 					width={700}
 					height={800}
-					className="w-full h-auto mx-auto"
+					className="w-full h-auto mx-auto rounded-md"
 				/>
 			</div>
 		</div>

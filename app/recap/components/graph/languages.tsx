@@ -96,7 +96,9 @@ export const LanguagesUsageGraph: FC<Props> = ({ data }) => {
 			<CardHeader className="items-start pb-0">
 				<CardTitle>言語の使用率</CardTitle>
 				<CardDescription>
-					あなたが最も使用した言語は <b>{limitedData[0].language}</b> です。
+					{limitedData.length === 0
+						? "データがありません。"
+						: `あなたが最も使用した言語は <b>${limitedData[0].language}</b> です。`}
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="flex-1 pb-0">

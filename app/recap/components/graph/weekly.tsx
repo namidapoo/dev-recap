@@ -89,7 +89,7 @@ export const WeeklyContributionsGraph: FC<Props> = ({ dayOfWeekData }) => {
 										<span key="value" className="font-bold">
 											{value}
 										</span>,
-										"Contributions",
+										"コントリビューション",
 									]}
 								/>
 							}

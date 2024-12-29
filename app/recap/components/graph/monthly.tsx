@@ -89,7 +89,7 @@ export const MonthlyContributionsGraph: FC<Props> = ({ monthlyData }) => {
 										<span key="value" className="font-bold">
 											{value}
 										</span>,
-										"Contributions",
+										"コントリビューション",
 									]}
 								/>
 							}

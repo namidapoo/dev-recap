@@ -11,8 +11,6 @@ export default async function Home() {
 	const session = await auth();
 	if (!session?.user) return null;
 
-	console.log(session);
-
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-3 gap-8 h-full pt-24 px-4 text-accent-foreground md:items-center justify-items-center">
 			<div className="col-span-1 w-full max-w-md space-y-8 text-center">
@@ -49,6 +47,7 @@ export default async function Home() {
 							width={20}
 							height={20}
 							className="dark:hidden"
+							priority
 						/>
 						<Image
 							src={GitHubBlack}
@@ -56,6 +55,7 @@ export default async function Home() {
 							width={20}
 							height={20}
 							className="hidden dark:block"
+							priority
 						/>
 						振り返りを見る
 					</Link>
@@ -69,6 +69,7 @@ export default async function Home() {
 					width={700}
 					height={800}
 					className="w-full h-auto mx-auto rounded-md"
+					priority
 				/>
 			</div>
 		</div>

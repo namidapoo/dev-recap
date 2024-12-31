@@ -50,6 +50,7 @@ type GitHubStatsQueryResponse = {
 	user: {
 		createdAt: string;
 		bio: string | null;
+		avatarUrl: string;
 		followers: {
 			totalCount: number;
 		};
@@ -102,6 +103,7 @@ export type Stats = {
 	userProfile: {
 		joinedDate: string; // 登録日時
 		bio: string | null; // bio
+		avatarUrl: string; // アバター画像URL
 		followingCount: number; // フォロー数
 		followersCount: number; // フォロワー数
 	};
@@ -184,6 +186,7 @@ export const fetchGitHubStats = async ({
       user(login: $login) {
         createdAt
         bio
+		avatarUrl
         followers {
           totalCount
         }
@@ -427,6 +430,7 @@ export const fetchGitHubStats = async ({
 		userProfile: {
 			joinedDate: user.createdAt,
 			bio: user.bio,
+			avatarUrl: user.avatarUrl,
 			followingCount: user.following.totalCount,
 			followersCount: user.followers.totalCount,
 		},

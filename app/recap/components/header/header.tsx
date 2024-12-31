@@ -8,6 +8,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { type FC } from "react";
 import { ModeToggle } from "../theme-toggle/theme-toggle";
+import { UserButton } from "../user-button";
 import { Breadcrumbs } from "./breadcrumbs";
 
 export const Header: FC = () => {
@@ -46,6 +47,7 @@ export const Header: FC = () => {
 							className="dark:hidden"
 						/>
 					</Link>
+					<UserButton />
 					<ModeToggle />
 				</div>
 			</header>

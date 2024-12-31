@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSession } from "next-auth/react";
 import type { FC } from "react";
-import { SignIn, SignOut } from "./auth-components";
+import { SignOut } from "./auth-components";
 
 export const UserButton: FC = () => {
 	const { data: session } = useSession();

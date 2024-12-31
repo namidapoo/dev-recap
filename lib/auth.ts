@@ -29,6 +29,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			session.accessToken = token.accessToken;
 			return session;
 		},
+		authorized({ auth, request: { nextUrl } }) {
+			const isLoggedIn = !!auth?.user;
+			const isOnRecap = nextUrl.pathname.startsWith("/recap");
+			if (isLoggedIn && !isOnRecap) {
+				return Response.redirect(new URL(`/recap/${auth.user.login}`, nextUrl));
+			}
+			return true;
+		},
 	},
 });
 declare module "next-auth" {

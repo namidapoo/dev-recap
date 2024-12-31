@@ -32,21 +32,21 @@ export default async function Home() {
 					}}
 					className="w-full max-w-xs mx-auto space-y-2"
 				>
-					<p className="text-lg">or</p>
-					<Button size="lg" className="mx-auto w-full max-w-xs py-6 text-lg">
+					<p className="text-md">または</p>
+					<Button size="lg" className="mx-auto w-full max-w-xs py-6 text-md">
 						<Image
 							src={GitHubWhite}
 							alt="GitHub"
-							width={24}
-							height={24}
+							width={20}
+							height={20}
 							className="dark:hidden"
 							priority
 						/>
 						<Image
 							src={GitHubBlack}
 							alt="GitHub"
-							width={24}
-							height={24}
+							width={20}
+							height={20}
 							className="hidden dark:block"
 							priority
 						/>

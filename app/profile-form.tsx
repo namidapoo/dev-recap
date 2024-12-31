@@ -44,8 +44,8 @@ export const ProfileForm: FC = () => {
 					control={form.control}
 					name="username"
 					render={({ field }) => (
-						<FormItem className="text-left">
-							<FormControl className="py-6 text-lg">
+						<FormItem className="text-left text-lg">
+							<FormControl className="h-12">
 								<Input
 									placeholder="ユーザー名を入力してください。"
 									{...field}
@@ -55,7 +55,7 @@ export const ProfileForm: FC = () => {
 						</FormItem>
 					)}
 				/>
-				<Button className="mx-auto w-full max-w-xs py-6 text-lg">
+				<Button className="mx-auto w-full max-w-xs py-6 text-md">
 					振り返りを見る
 				</Button>
 			</form>

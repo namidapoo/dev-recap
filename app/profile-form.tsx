@@ -27,7 +27,6 @@ export const ProfileForm: FC = () => {
 		defaultValues: {
 			username: "",
 		},
-		mode: "onBlur",
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {

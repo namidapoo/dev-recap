@@ -8,7 +8,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { auth } from "@/lib/auth";
 import { format } from "date-fns";
 import {
 	GitCommitHorizontal,
@@ -25,33 +24,28 @@ import { WeeklyContributionsGraph } from "./graph/weekly";
 import { ReposContributions } from "./repos-contributions";
 
 type Props = {
+	user: string;
 	data: Stats;
 };
 
-export const OverView: FC<Props> = async ({ data }) => {
-	const session = await auth();
-	if (!session) return null;
-
+export const OverView: FC<Props> = async ({ user, data }) => {
 	return (
 		<div className="space-y-4 pb-4">
 			<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-12 xl:justify-center 2xl:gap-12">
 				<Card className="relative">
 					<Avatar className="h-16 w-16 border absolute top-1/2 right-6 transform -translate-y-1/2">
-						<AvatarImage
-							src={session.user?.image ?? ""}
-							alt={session.user?.login ?? ""}
-						/>
-						<AvatarFallback>{session.user?.login}</AvatarFallback>
+						<AvatarImage src={data.userProfile.avatarUrl} alt={user} />
+						<AvatarFallback>{user}</AvatarFallback>
 					</Avatar>
 					<CardHeader className="pr-24 pb-2">
 						<CardTitle className="text-xl truncate">
 							<a
-								href={`https://github.com/${session.user.login}`}
+								href={`https://github.com/${user}`}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="hover:underline"
 							>
-								{session.user.login}
+								{user}
 							</a>
 							<p className="text-xs text-muted-foreground truncate font-normal">
 								Joined on{" "}
@@ -188,13 +182,15 @@ export const OverView: FC<Props> = async ({ data }) => {
 						<CardHeader>
 							<CardTitle>リポジトリごとの統計</CardTitle>
 							<CardDescription>
-							  {data.repositoriesByCommitCount.length === 0 ? (
-							    "データがありません。"
-							  ) : (
-							    <>
-							      あなたが最もコミットしたリポジトリは <b>{data.repositoriesByCommitCount[0].nameWithOwner}</b> です。
-							    </>
-							  )}
+								{data.repositoriesByCommitCount.length === 0 ? (
+									"データがありません。"
+								) : (
+									<>
+										あなたが最もコミットしたリポジトリは{" "}
+										<b>{data.repositoriesByCommitCount[0].nameWithOwner}</b>{" "}
+										です。
+									</>
+								)}
 							</CardDescription>
 						</CardHeader>
 						<CardContent>

@@ -146,7 +146,9 @@ export const ContributionGrass: FC<Props> = ({
 			</TooltipProvider>
 
 			<div className="flex items-end justify-between">
-				<p className="font-bold text-foreground">{totalContributions} contributions</p>
+				<p className="font-bold text-foreground">
+					{totalContributions} contributions
+				</p>
 				<div className="flex gap-2 items-center">
 					<ActivityLevelIndicator />
 					<Button

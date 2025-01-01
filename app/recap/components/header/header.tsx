@@ -19,14 +19,14 @@ export const Header: FC = () => {
 		<SessionProvider>
 			<header
 				className={cn(
-					"flex h-16 items-center justify-between bg-background border-b dark:shadow-current p-6",
+					"flex h-16 items-center justify-between bg-background border-b dark:shadow-current px-6 py-4 ",
 					isOnTop && "hidden",
 				)}
 			>
 				<div className="flex items-center gap-2">
 					<Breadcrumbs />
 				</div>
-				<div className="flex items-center gap-6">
+				<div className="flex items-center gap-4">
 					<Link
 						href="https://github.com/namidapoo/dev-recap"
 						target="_blank"
@@ -35,15 +35,15 @@ export const Header: FC = () => {
 						<Image
 							src={GitHubWhite}
 							alt="GitHub"
-							width={20}
-							height={20}
+							width={30}
+							height={30}
 							className="hidden dark:block"
 						/>
 						<Image
 							src={GitHubBlack}
 							alt="GitHub"
-							width={20}
-							height={20}
+							width={30}
+							height={30}
 							className="dark:hidden"
 						/>
 					</Link>

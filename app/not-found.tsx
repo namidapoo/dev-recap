@@ -6,7 +6,7 @@ export const runtime = "edge";
 
 export default function NotFound() {
 	return (
-		<div className="flex h-full flex-col items-center justify-center bg-background text-foreground">
+		<div className="flex min-h-dvh -mt-24 flex-col items-center justify-center bg-background text-foreground">
 			<div className="space-y-4 text-center">
 				<h1 className="font-extrabold text-4xl tracking-tight lg:text-5xl">
 					404

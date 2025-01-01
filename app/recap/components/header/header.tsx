@@ -19,7 +19,7 @@ export const Header: FC = () => {
 		<SessionProvider>
 			<header
 				className={cn(
-					"flex h-16 items-center justify-between bg-background border-b dark:shadow-current px-6 py-4 ",
+					"fixed top-0 left-0 right-0 flex h-16 items-center justify-between bg-background border-b dark:shadow-current px-6 py-4 z-50",
 					isOnTop && "hidden",
 				)}
 			>

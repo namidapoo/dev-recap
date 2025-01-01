@@ -23,12 +23,8 @@ const RootLayout: FC<Readonly<Props>> = ({ children }) => {
 					enableSystem
 					disableTransitionOnChange
 				>
-					<div className="flex flex-col h-dvh">
-						<Header />
-						<div className="flex-grow p-4 md:px-6 overflow-auto">
-							{children}
-						</div>
-					</div>
+					<Header />
+					<main className="mt-16 p-4 md:px-6">{children}</main>
 				</ThemeProvider>
 			</body>
 		</html>

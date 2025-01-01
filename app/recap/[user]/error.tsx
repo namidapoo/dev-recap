@@ -7,7 +7,7 @@ export const runtime = "edge";
 
 export default function ErrorPage() {
 	return (
-		<div className="flex h-full flex-col items-center justify-center bg-background text-foreground">
+		<div className="flex min-h-dvh -mt-24 flex-col items-center justify-center bg-background text-foreground">
 			<div className="space-y-4 text-center">
 				<p className="text-lg">ユーザーの情報を取得できませんでした。</p>
 				<Separator className="mx-auto w-40" />

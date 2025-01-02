@@ -10,7 +10,7 @@ export const runtime = "edge";
 
 export default async function Home() {
 	return (
-		<div className="grid grid-cols-1 md:grid-cols-3 gap-8 h-full pt-24 px-4 text-accent-foreground md:items-center justify-items-center -mt-16">
+		<div className="grid grid-cols-1 md:grid-cols-3 gap-8 min-h-dvh px-4 text-accent-foreground items-center justify-items-center -mt-24">
 			<div className="col-span-1 w-full max-w-md text-center space-y-2">
 				<div className="space-y-8">
 					<h1 className="font-bold text-2xl text-blue-600 lg:text-5xl">

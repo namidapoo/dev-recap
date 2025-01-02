@@ -21,9 +21,9 @@ export const UserButton: FC = () => {
 				<DropdownMenuTrigger asChild>
 					<Button
 						variant="ghost"
-						className="relative h-10 w-10 border rounded-full"
+						className="relative h-8 w-8 border rounded-full"
 					>
-						<Avatar className="h-9 w-9">
+						<Avatar className="h-8 w-8">
 							{session.user.image && (
 								<AvatarImage
 									src={session.user.image}

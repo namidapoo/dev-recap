@@ -13,7 +13,7 @@ export default async function Home() {
 		<div className="grid grid-cols-1 md:grid-cols-3 gap-8 min-h-dvh px-4 text-accent-foreground items-center justify-items-center -mt-24">
 			<div className="col-span-1 w-full max-w-md text-center space-y-2">
 				<div className="space-y-8">
-					<h1 className="font-bold text-2xl text-blue-600 lg:text-5xl">
+					<h1 className="font-bold text-4xl text-blue-600 lg:text-5xl">
 						Dev Recap 2024
 					</h1>
 					<div className="space-y-2">
@@ -61,7 +61,7 @@ export default async function Home() {
 					alt="Overview"
 					width={700}
 					height={800}
-					className="w-full h-auto mx-auto rounded-md"
+					className="w-full h-auto mx-auto rounded-md drop-shadow-xl"
 					priority
 				/>
 			</div>
